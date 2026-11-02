@@ -3166,11 +3166,13 @@ static CURLcode ossl_connect_step1(struct Curl_easy *data,
         if (!((pCertCtx->dwCertEncodingType & PKCS_7_ASN_ENCODING) == PKCS_7_ASN_ENCODING))
         {
           /* Add all certs we find to OpenSSL's store */
-          X509 *cert = d2i_X509(NULL, (const unsigned char**)&pCertCtx->pbCertEncoded, pCertCtx->cbCertEncoded);
+          const unsigned char *encoded = pCertCtx->pbCertEncoded;
+          X509 *cert = d2i_X509(NULL, &encoded, pCertCtx->cbCertEncoded);
           X509_STORE_add_cert(store, cert);
           X509_free(cert);
         }
       }
+      CertCloseStore(hStore, 0);
     }
   }
 #endif
